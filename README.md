@@ -5,7 +5,6 @@ Espace de travail ROS 2 (fork de `glcs_ws`).
 ## Compilation
 
 ```bash
-cd ~/cdf_ws
 rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install
 source install/setup.bash
