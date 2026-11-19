@@ -39,10 +39,10 @@ sudo ip link set can0 down
 
 ```bash
 # Modèle du robot + RViz (simulation)
-ros2 launch urdf_test display.launch.py use_sim_time:=true
+ros2 launch cdf_bringup display.launch.py use_sim_time:=true
 
 # Modèle du robot sur le matériel réel
-ros2 launch urdf_test display.launch.py use_sim_time:=false
+ros2 launch cdf_bringup display.launch.py use_sim_time:=false
 
 # Matériel ros2_control (stepper FOC)
 ros2 launch stepper_foc_1_hw stepper_foc_test.launch.py

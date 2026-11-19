@@ -51,7 +51,7 @@
       </link>
     </model>
     <include>
-        <uri>package://urdf_test/model/Table2027</uri>
+        <uri>package://cdf_bringup/model/Table2027</uri>
         <name>Table_2027</name>
         <pose>0 0 0 0 0 0</pose>
     </include>

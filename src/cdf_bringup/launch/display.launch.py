@@ -8,18 +8,18 @@ from launch_ros.substitutions import FindPackageShare
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
-    urdf = Command(['xacro ', PathJoinSubstitution([FindPackageShare('urdf_test'), 'description', 'model.urdf.xacro']),
+    urdf = Command(['xacro ', PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'description', 'model.urdf.xacro']),
                     ' use_sim:=', use_sim_time])
-    urdf_cam = Command(['xacro ', PathJoinSubstitution([FindPackageShare('urdf_test'), 'description', 'mcc_camera.urdf.xacro'])])
+    urdf_cam = Command(['xacro ', PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'description', 'mcc_camera.urdf.xacro'])])
     params = {'robot_description': urdf, 'use_sim_time': use_sim_time}
 
     gz_launch_path = PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py'])
-    world_path = PathJoinSubstitution([FindPackageShare('urdf_test'), 'world.sdf'])
+    world_path = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'world.sdf'])
 
-    rz_bridge_cfg_path = PathJoinSubstitution([FindPackageShare('urdf_test'), 'config', 'ros_gz_example_bridge.yaml'])
-    ekf_cfg_path = PathJoinSubstitution([FindPackageShare('urdf_test'), 'config', 'ekf.yaml'])
+    rz_bridge_cfg_path = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'config', 'ros_gz_example_bridge.yaml'])
+    ekf_cfg_path = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'config', 'ekf.yaml'])
 
-    controllers_cfg = PathJoinSubstitution([FindPackageShare('urdf_test'), 'config', 'controllers.yaml'])
+    controllers_cfg = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'config', 'controllers.yaml'])
 
     return LaunchDescription([
         DeclareLaunchArgument(
@@ -132,7 +132,7 @@ def generate_launch_description():
             name='rviz2',
             output='screen',
             condition=IfCondition(LaunchConfiguration('rviz')),
-            arguments=['-d', PathJoinSubstitution([FindPackageShare('urdf_test'), 'robot.rviz',])],
+            arguments=['-d', PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'robot.rviz',])],
             parameters=[{'use_sim_time': use_sim_time}],
         ),
         Node(package='controller_manager', executable='spawner',

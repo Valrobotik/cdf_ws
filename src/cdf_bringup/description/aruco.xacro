@@ -3,8 +3,8 @@
     <link name="aruco_link">
         <visual>
             <geometry>
-                <mesh filename="$(find urdf_test)/model/aruco_tag.dae" scale="1 1 1"/>
-                <!-- <mesh filename="package://urdf_test/model/aruco_tag.dae" scale="1 1 1"/> -->
+                <mesh filename="$(find cdf_bringup)/model/aruco_tag.dae" scale="1 1 1"/>
+                <!-- <mesh filename="package://cdf_bringup/model/aruco_tag.dae" scale="1 1 1"/> -->
             </geometry>
             <!-- <geometry>
                 <box size="0.1 0.1 0.02"/>
