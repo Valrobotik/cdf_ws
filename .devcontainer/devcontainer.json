@@ -24,9 +24,8 @@
         }
     },
     "containerEnv": {
-        // "DISPLAY": "unix:0",
         "DISPLAY": "${localEnv:DISPLAY}",
-        "XAUTHORITY": "/root/.Xauthority",
+        "XAUTHORITY": "/tmp/.Xauthority",
         "ROS_AUTOMATIC_DISCOVERY_RANGE": "LOCALHOST",
         "ROS_DOMAIN_ID": "96"
     },
@@ -35,13 +34,12 @@
         "--cap-add=NET_RAW",
         "--net=host",
         "--pid=host",
-        "--ipc=host",
-        "-e", "DISPLAY=${env:DISPLAY}"
+        "--ipc=host"
     ],
     "mounts": [
        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
-       "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+       "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached",
+       "source=${localEnv:HOME}/.Xauthority,target=/tmp/.Xauthority,type=bind,readonly"
     ],
-    "postCreateCommand": "sudo mkdir -p ~/.ros/log  && sudo chown -R $(whoami) /home/ws/ ~/.ros/ && sudo apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -y",
-    "postStartCommand": "xhost +si:localuser:root"
+    "postCreateCommand": "sudo mkdir -p ~/.ros/log  && sudo chown -R $(whoami) /home/ws/ ~/.ros/ && sudo apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -y"
 }
