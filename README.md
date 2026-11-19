@@ -38,10 +38,10 @@ sudo ip link set can0 down
 
 ```bash
 # Simulation Gazebo (ros2_control via gz_ros2_control)
-ros2 launch cdf_bringup display.launch.py sim:=true
+ros2 launch cdf_bringup bringup.launch.py sim:=true
 
 # Matériel réel (stepper_foc_1_hw sur can0)
-ros2 launch cdf_bringup display.launch.py sim:=false
+ros2 launch cdf_bringup bringup.launch.py sim:=false
 
 # Matériel ros2_control (stepper FOC)
 ros2 launch stepper_foc_1_hw stepper_foc_test.launch.py
