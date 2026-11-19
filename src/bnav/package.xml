@@ -13,24 +13,29 @@
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
-  <exec_depend>ros2_controllers</exec_depend>
+  <exec_depend>aruco_interfaces</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
   <exec_depend>nav2_bringup</exec_depend>
-  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_costmap_2d</exec_depend>
   <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>nav2_mppi_controller</exec_depend>
   <exec_depend>nav2_smac_planner</exec_depend>
-  <exec_depend>nav2_costmap_2d</exec_depend>
-  <exec_depend>rclpy</exec_depend>
   <exec_depend>nav_msgs</exec_depend>
-  <exec_depend>visualization_msgs</exec_depend>
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>ros2_controllers</exec_depend>
+  <exec_depend>rviz2</exec_depend>
   <exec_depend>tf2_ros_py</exec_depend>
-  <exec_depend>aruco_interfaces</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
-
-  <depend>rclcpp</depend>
-  <depend>nav2_behavior_tree</depend>
   <depend>ament_index_cpp</depend>
+  <depend>behaviortree_cpp</depend>
+  <depend>geometry_msgs</depend>
+  <depend>nav2_behavior_tree</depend>
   <depend>nav2_ros_common</depend>
+  <depend>rclcpp</depend>
 
   <export>
     <build_type>ament_cmake</build_type>
