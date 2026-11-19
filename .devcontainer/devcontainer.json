@@ -42,6 +42,6 @@
        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
        "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
     ],
-    "postCreateCommand": "sudo mkdir -p ~/.ros/log  && sudo chown -R $(whoami) /home/ws/ ~/.ros/ && rosdep update && rosdep install --from-paths src --ignore-src -y",
+    "postCreateCommand": "sudo mkdir -p ~/.ros/log  && sudo chown -R $(whoami) /home/ws/ ~/.ros/ && sudo apt-get update && rosdep update && rosdep install --from-paths src --ignore-src -y",
     "postStartCommand": "xhost +si:localuser:root"
 }
