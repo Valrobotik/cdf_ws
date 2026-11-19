@@ -19,11 +19,9 @@ def generate_launch_description():
         [FindPackageShare('bnav'), 'config', 'nav2_params.yaml'])
     default_map_file = PathJoinSubstitution(
         [FindPackageShare('bnav'), 'maps', 'map.yaml'])
-    default_bt_xml = PathJoinSubstitution(
-    [FindPackageShare('bnav'), 'behavior_trees', 'alternate_goals.xml'])
 
-    navigation_launch_path = PathJoinSubstitution(
-        [nav2_bringup_share, 'launch', 'navigation_launch.py'])
+    bringup_launch_path = PathJoinSubstitution(
+        [nav2_bringup_share, 'launch', 'bringup_launch.py'])
     rviz_launch_path = PathJoinSubstitution(
         [nav2_bringup_share, 'launch', 'rviz_launch.py'])
 
@@ -44,35 +42,19 @@ def generate_launch_description():
             'rviz', default_value='true',
             description='Launch the standard Nav2 RViz view alongside navigation'),
 
-        Node(
-            package='nav2_map_server',
-            executable='map_server',
-            name='map_server',
-            output='screen',
-            parameters=[{
-                'yaml_filename': map_yaml_file,
-                'use_sim_time': use_sim_time,
-            }],
-        ),
-        Node(
-            package='nav2_lifecycle_manager',
-            executable='lifecycle_manager',
-            name='lifecycle_manager_map_server',
-            output='screen',
-            parameters=[{
-                'use_sim_time': use_sim_time,
-                'autostart': autostart,
-                'node_names': ['map_server'],
-            }],
-        ),
-
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(navigation_launch_path),
+            PythonLaunchDescriptionSource(bringup_launch_path),
             launch_arguments={
+                'slam': 'False',
+                'use_localization': 'False',
+                'serve_static_map': 'True',
+                'use_keepout_zones': 'False',
+                'use_speed_zones': 'False',
+                'use_composition': 'False',
+                'map': map_yaml_file,
                 'use_sim_time': use_sim_time,
                 'params_file': params_file,
                 'autostart': autostart,
-                # 'default_bt_xml_filename': default_bt_xml,
             }.items(),
         ),
         IncludeLaunchDescription(
@@ -98,6 +80,7 @@ def generate_launch_description():
             executable='alternate_goals_mission',
             name='alternate_goals_mission',
             output='screen',
+            parameters=[{'use_sim_time': use_sim_time}],
         ),
 
     ])
