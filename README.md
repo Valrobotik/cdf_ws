@@ -53,6 +53,20 @@ ros2 launch bnav nav.launch.py
 ros2 launch aruco_pose_estimation aruco_pose_estimation.launch.py
 ```
 
+## Ajouter des boîtes ArUco dans Gazebo
+
+```bash
+# Modèle Box_Aruco
+ros2 run ros_gz_sim create \
+  -file "$(ros2 pkg prefix cdf_bringup)/share/cdf_bringup/model/Pierre/model.sdf" \
+  -name box1 -x 0.5 -y 0.5 -z 0.055 -R 1.5708
+
+# Autre boîte
+ros2 run ros_gz_sim create \
+  -file "$(ros2 pkg prefix cdf_bringup)/share/cdf_bringup/model/Pierre/model.sdf" \
+  -name box2 -x -0.5 -y 0.5 -z 0.055 -R 1.5708 -Y 1.57
+```
+
 ## Téléopération (clavier twist, `stamped`)
 
 ```bash
