@@ -46,11 +46,17 @@ ros2 launch cdf_bringup bringup.launch.py sim:=false
 # Matériel ros2_control (stepper FOC)
 ros2 launch stepper_foc_1_hw stepper_foc_test.launch.py
 
-# Navigation
-ros2 launch bnav nav.launch.py
+# Navigation (simulation)
+ros2 launch bnav nav.launch.py sim:=true
 
-# Détection de marqueurs ArUco
-ros2 launch aruco_pose_estimation aruco_pose_estimation.launch.py
+# Navigation (matériel réel)
+ros2 launch bnav nav.launch.py sim:=false
+
+# Détection de marqueurs ArUco (simulation)
+ros2 launch aruco_pose_estimation aruco_pose_estimation.launch.py sim:=true
+
+# Détection de marqueurs ArUco (matériel réel)
+ros2 launch aruco_pose_estimation aruco_pose_estimation.launch.py sim:=false
 ```
 
 ## Ajouter des boîtes ArUco dans Gazebo

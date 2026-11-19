@@ -88,10 +88,10 @@ def generate_launch_description():
         description='Name of the topic to publish the image with the detected markers',
     )
 
-    use_sim_time_arg = DeclareLaunchArgument(
-        name='use_sim_time',
+    sim_arg = DeclareLaunchArgument(
+        name='sim',
         default_value='false',
-        description='Use simulation time (set to true when running with Gazebo)',
+        description='Use the Gazebo clock and simulation if true',
         choices=['true', 'false', 'True', 'False']
     )
 
@@ -106,7 +106,7 @@ def generate_launch_description():
         package='aruco_pose_estimation',
         executable='aruco_node.py',
         parameters=[aruco_params_file, {
-            "use_sim_time": LaunchConfiguration('use_sim_time'),
+            "use_sim_time": LaunchConfiguration('sim'),
             "marker_size": LaunchConfiguration('marker_size'),
             "aruco_dictionary_id": LaunchConfiguration('aruco_dictionary_id'),
             "image_topic": LaunchConfiguration('image_topic'),
@@ -159,6 +159,7 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         arguments=['-d', rviz_file],
+        parameters=[{'use_sim_time': LaunchConfiguration('sim')}],
         condition=IfCondition(LaunchConfiguration('rviz'))
     )
 
@@ -174,7 +175,7 @@ def generate_launch_description():
         detected_markers_topic_arg,
         markers_visualization_topic_arg,
         output_image_topic_arg,
-        use_sim_time_arg,
+        sim_arg,
         rviz_arg,
 
         # Nodes

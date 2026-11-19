@@ -8,7 +8,7 @@ from launch.conditions import IfCondition
 
 
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time')
+    sim = LaunchConfiguration('sim')
     params_file = LaunchConfiguration('params_file')
     map_yaml_file = LaunchConfiguration('map')
     autostart = LaunchConfiguration('autostart')
@@ -27,8 +27,8 @@ def generate_launch_description():
 
     return LaunchDescription([
         DeclareLaunchArgument(
-            'use_sim_time', default_value='false',
-            description='Use simulation clock if true'),
+            'sim', default_value='false',
+            description='Use the Gazebo clock and simulation if true'),
         DeclareLaunchArgument(
             'params_file', default_value=default_params_file,
             description='Full path to the nav2 params file'),
@@ -52,7 +52,7 @@ def generate_launch_description():
                 'use_speed_zones': 'False',
                 'use_composition': 'False',
                 'map': map_yaml_file,
-                'use_sim_time': use_sim_time,
+                'use_sim_time': sim,
                 'params_file': params_file,
                 'autostart': autostart,
             }.items(),
@@ -61,7 +61,7 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(rviz_launch_path),
             condition=IfCondition(use_rviz),
             launch_arguments={
-                'use_sim_time': use_sim_time,
+                'use_sim_time': sim,
             }.items(),
         ),
         Node(
@@ -72,7 +72,7 @@ def generate_launch_description():
             parameters=[
                 PathJoinSubstitution(
                     [FindPackageShare('bnav'), 'config', 'box_obstacles.yaml']),
-                {'use_sim_time': use_sim_time},
+                {'use_sim_time': sim},
             ],
         ),
         Node(
@@ -80,7 +80,7 @@ def generate_launch_description():
             executable='alternate_goals_mission',
             name='alternate_goals_mission',
             output='screen',
-            parameters=[{'use_sim_time': use_sim_time}],
+            parameters=[{'use_sim_time': sim}],
         ),
 
     ])
