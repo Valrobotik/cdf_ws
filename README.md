@@ -37,11 +37,11 @@ sudo ip link set can0 down
 ## Lancer les nodes
 
 ```bash
-# Modèle du robot + RViz (simulation)
-ros2 launch cdf_bringup display.launch.py use_sim_time:=true
+# Simulation Gazebo (ros2_control via gz_ros2_control)
+ros2 launch cdf_bringup display.launch.py sim:=true
 
-# Modèle du robot sur le matériel réel
-ros2 launch cdf_bringup display.launch.py use_sim_time:=false
+# Matériel réel (stepper_foc_1_hw sur can0)
+ros2 launch cdf_bringup display.launch.py sim:=false
 
 # Matériel ros2_control (stepper FOC)
 ros2 launch stepper_foc_1_hw stepper_foc_test.launch.py
