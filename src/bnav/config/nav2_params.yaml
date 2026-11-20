@@ -240,11 +240,15 @@ global_costmap:
       robot_radius: 0.15
       # footprint: "[[0.15, 0.11], [0.15, -0.11], [-0.15, -0.11], [-0.15, 0.11]]"
 
-      plugins: ["static_layer", "inflation_layer"]
+      plugins: ["static_layer", "box_layer", "inflation_layer"]
 
       static_layer:
         plugin: "nav2_costmap_2d::StaticLayer"
         map_subscribe_transient_local: True
+
+      box_layer:
+        plugin: "bnav/BoxLayer"
+        map_topic: /box_map
 
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -267,7 +271,11 @@ local_costmap:
       robot_radius: 0.15
       # footprint: "[[0.15, 0.11], [0.15, -0.11], [-0.15, -0.11], [-0.15, 0.11]]"
 
-      plugins: ["inflation_layer"]
+      plugins: ["box_layer", "inflation_layer"]
+
+      box_layer:
+        plugin: "bnav/BoxLayer"
+        map_topic: /box_map
 
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"

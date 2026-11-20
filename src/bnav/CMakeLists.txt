@@ -14,6 +14,9 @@ find_package(ament_cmake_python REQUIRED)
 find_package(nav2_behavior_tree REQUIRED)
 find_package(ament_index_cpp REQUIRED)
 find_package(nav2_ros_common REQUIRED)
+find_package(nav2_costmap_2d REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(pluginlib REQUIRED)
 
 ament_python_install_package(${PROJECT_NAME})
 
@@ -47,6 +50,21 @@ target_link_libraries(alternate_goals_mission
   ament_index_cpp::ament_index_cpp
 )
 install(TARGETS alternate_goals_mission DESTINATION lib/${PROJECT_NAME})
+
+add_library(bnav_box_layer SHARED src/box_layer.cpp)
+target_compile_features(bnav_box_layer PUBLIC cxx_std_17)
+target_include_directories(bnav_box_layer PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+target_link_libraries(bnav_box_layer
+  nav2_costmap_2d::nav2_costmap_2d_core
+  nav_msgs::nav_msgs__rosidl_typesupport_cpp
+  rclcpp::rclcpp
+  pluginlib::pluginlib)
+pluginlib_export_plugin_description_file(nav2_costmap_2d bnav_box_layer.xml)
+install(TARGETS bnav_box_layer
+  LIBRARY DESTINATION lib ARCHIVE DESTINATION lib RUNTIME DESTINATION bin)
+install(FILES bnav_box_layer.xml DESTINATION share/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

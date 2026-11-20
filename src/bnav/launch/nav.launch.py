@@ -20,8 +20,8 @@ def generate_launch_description():
     default_map_file = PathJoinSubstitution(
         [FindPackageShare('bnav'), 'maps', 'map.yaml'])
 
-    bringup_launch_path = PathJoinSubstitution(
-        [nav2_bringup_share, 'launch', 'bringup_launch.py'])
+    navigation_core_launch_path = PathJoinSubstitution(
+        [FindPackageShare('bnav'), 'launch', 'navigation_core.launch.py'])
     rviz_launch_path = PathJoinSubstitution(
         [nav2_bringup_share, 'launch', 'rviz_launch.py'])
 
@@ -42,18 +42,15 @@ def generate_launch_description():
             'rviz', default_value='true',
             description='Launch the standard Nav2 RViz view alongside navigation'),
 
+        # One Nav2 lifecycle manager for the servers this robot uses. The
+        # optional route/collision/docking/following servers are not started;
+        # they are unused here and a stuck optional server blocks Nav2.
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource(bringup_launch_path),
+            PythonLaunchDescriptionSource(navigation_core_launch_path),
             launch_arguments={
-                'slam': 'False',
-                'use_localization': 'False',
-                'serve_static_map': 'True',
-                'use_keepout_zones': 'False',
-                'use_speed_zones': 'False',
-                'use_composition': 'False',
-                'map': map_yaml_file,
-                'use_sim_time': sim,
+                'sim': sim,
                 'params_file': params_file,
+                'map': map_yaml_file,
                 'autostart': autostart,
             }.items(),
         ),
@@ -61,6 +58,9 @@ def generate_launch_description():
             PythonLaunchDescriptionSource(rviz_launch_path),
             condition=IfCondition(use_rviz),
             launch_arguments={
+                # rviz_launch.py defaults to the 'navigation' namespace, while
+                # this launch keeps the Nav2 nodes in the root namespace.
+                'namespace': '',
                 'use_sim_time': sim,
             }.items(),
         ),

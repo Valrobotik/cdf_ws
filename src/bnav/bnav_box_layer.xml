@@ -1,0 +1,8 @@
+<library path="bnav_box_layer">
+  <class
+    name="bnav/BoxLayer"
+    type="bnav::BoxLayer"
+    base_class_type="nav2_costmap_2d::Layer">
+    <description>Marks box footprints from an OccupancyGrid as lethal obstacles.</description>
+  </class>
+</library>
