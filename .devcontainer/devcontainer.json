@@ -1,5 +1,10 @@
 {
     "name": "ROS 2 Development Container",
+    "initializeCommand": [
+        "bash",
+        "-lc",
+        "mkdir -p \"$HOME\" && touch \"$HOME/.Xauthority\"; u=$(id -un); if command -v xhost >/dev/null 2>&1; then xhost +si:localuser:$u >/dev/null 2>&1 || true; xhost +si:localuser:root >/dev/null 2>&1 || true; fi"
+    ],
     "privileged": false,
     "remoteUser": "root",
     "build": {
