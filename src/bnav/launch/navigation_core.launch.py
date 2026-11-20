@@ -35,6 +35,7 @@ def generate_launch_description():
         'planner_server',
         'behavior_server',
         'velocity_smoother',
+        'collision_monitor',
         'bt_navigator',
         'waypoint_follower',
     ]
@@ -75,6 +76,8 @@ def generate_launch_description():
         nav_node(
             'nav2_velocity_smoother', 'velocity_smoother', 'velocity_smoother',
             [('cmd_vel', 'cmd_vel_nav')]),
+        nav_node(
+            'nav2_collision_monitor', 'collision_monitor', 'collision_monitor'),
         nav_node('nav2_bt_navigator', 'bt_navigator', 'bt_navigator'),
         nav_node(
             'nav2_waypoint_follower', 'waypoint_follower', 'waypoint_follower'),
