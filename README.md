@@ -26,15 +26,20 @@ source install/setup.bash
 v4l2-ctl --list-devices
 ```
 
-### Lancer usb_cam
+### Lancer la caméra ZDC
 
 ```bash
 sudo apt install ros-lyrical-usb-cam
 
-ros2 run usb_cam usb_cam_node_exe --ros-args \
-  --namespace camera \
-  -p video_device:=/dev/video0
+ros2 launch cdf_bringup camera.launch.py
+
+# Vérifier le flux lu par le nœud ArUco
+ros2 topic hz /mcc/camera/image_raw
 ```
+
+La caméra publie dans le namespace `/mcc/camera` avec le frame
+`camera_link_optical`, ce qui correspond aux paramètres par défaut du nœud
+ArUco.
 
 ### Calibrer la caméra
 
@@ -43,7 +48,7 @@ sudo apt install ros-lyrical-camera-calibration
 
 ros2 run camera_calibration cameracalibrator \
   --size 8x6 --square 0.025 \
-  image:=/camera/image_raw camera:=/camera
+  image:=/mcc/camera/image_raw camera:=/mcc/camera
 ```
 
 ```bash
@@ -53,10 +58,8 @@ cp /tmp/calib/ost.yaml /home/ws/calibration/camera.yaml
 ```
 
 ```bash
-ros2 run usb_cam usb_cam_node_exe --ros-args \
-  --namespace camera \
-  -p video_device:=/dev/video0 \
-  -p camera_info_url:=file:///home/ws/calibration/camera.yaml
+ros2 launch cdf_bringup camera.launch.py \
+  camera_info_url:=file:///home/ws/calibration/camera.yaml
 ```
 
 ## Raspberry Pi: interface CAN
