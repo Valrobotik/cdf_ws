@@ -10,6 +10,55 @@ colcon build --symlink-install
 source install/setup.bash
 ```
 
+## Caméra USB
+
+### Dev container
+
+```json
+"runArgs": [
+    "--device=/dev/video0",
+    "--group-add=keep-groups",
+    // [...]
+]
+```
+
+```bash
+v4l2-ctl --list-devices
+```
+
+### Lancer usb_cam
+
+```bash
+sudo apt install ros-lyrical-usb-cam
+
+ros2 run usb_cam usb_cam_node_exe --ros-args \
+  --namespace camera \
+  -p video_device:=/dev/video0
+```
+
+### Calibrer la caméra
+
+```bash
+sudo apt install ros-lyrical-camera-calibration
+
+ros2 run camera_calibration cameracalibrator \
+  --size 8x6 --square 0.025 \
+  image:=/camera/image_raw camera:=/camera
+```
+
+```bash
+mkdir -p /home/ws/calibration /tmp/calib
+tar -xzf /tmp/calibrationdata.tar.gz -C /tmp/calib
+cp /tmp/calib/ost.yaml /home/ws/calibration/camera.yaml
+```
+
+```bash
+ros2 run usb_cam usb_cam_node_exe --ros-args \
+  --namespace camera \
+  -p video_device:=/dev/video0 \
+  -p camera_info_url:=file:///home/ws/calibration/camera.yaml
+```
+
 ## Raspberry Pi: interface CAN
 
 ```bash
