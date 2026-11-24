@@ -23,8 +23,27 @@ source install/setup.bash
 ```
 
 ```bash
+# Lister les périphériques
 v4l2-ctl --list-devices
+
+# Lister les contrôles disponibles
+v4l2-ctl -d /dev/video0 --list-ctrls
+
+# Rotation
+v4l2-ctl -d /dev/video0 --set-ctrl=rotate=180
+
+# Sinon, retournement horizontal + vertical
+v4l2-ctl -d /dev/video0 --set-ctrl=horizontal_flip=1
+v4l2-ctl -d /dev/video0 --set-ctrl=vertical_flip=1
 ```
+
+```bash
+ros2 param set /mcc/camera/v4l2_camera rotate 180
+```
+
+Pour rendre le réglage permanent, ajouter `"rotate": 180` aux paramètres du
+nœud dans `camera.launch.py`. Corriger l'orientation avant de lancer la
+calibration.
 
 ### Lancer la caméra ZDC
 
