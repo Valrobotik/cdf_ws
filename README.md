@@ -29,8 +29,6 @@ v4l2-ctl --list-devices
 ### Lancer la caméra ZDC
 
 ```bash
-sudo apt install ros-lyrical-usb-cam
-
 ros2 launch cdf_bringup camera.launch.py
 
 # Vérifier le flux lu par le nœud ArUco

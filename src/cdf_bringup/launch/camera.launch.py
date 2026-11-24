@@ -2,17 +2,12 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
     namespace = LaunchConfiguration("namespace")
     video_device = LaunchConfiguration("video_device")
-    image_width = LaunchConfiguration("image_width")
-    image_height = LaunchConfiguration("image_height")
-    framerate = LaunchConfiguration("framerate")
     pixel_format = LaunchConfiguration("pixel_format")
-    camera_name = LaunchConfiguration("camera_name")
     camera_info_url = LaunchConfiguration("camera_info_url")
     frame_id = LaunchConfiguration("frame_id")
 
@@ -29,23 +24,9 @@ def generate_launch_description():
                 description="V4L2 device of the ZDC camera",
             ),
             DeclareLaunchArgument(
-                "image_width", default_value="1920", description="Image width"
-            ),
-            DeclareLaunchArgument(
-                "image_height", default_value="1080", description="Image height"
-            ),
-            DeclareLaunchArgument(
-                "framerate", default_value="10.0", description="Camera framerate"
-            ),
-            DeclareLaunchArgument(
                 "pixel_format",
-                default_value="yuyv2rgb",
-                description="usb_cam pixel format",
-            ),
-            DeclareLaunchArgument(
-                "camera_name",
-                default_value="zdc",
-                description="Camera name used by camera_info_manager",
+                default_value="YUYV",
+                description="V4L2 pixel format (YUYV, UYVY or GREY)",
             ),
             DeclareLaunchArgument(
                 "camera_info_url",
@@ -58,21 +39,19 @@ def generate_launch_description():
                 description="Image and camera_info frame, matches the ArUco node",
             ),
             Node(
-                package="usb_cam",
-                executable="usb_cam_node_exe",
-                name="usb_cam",
+                package="v4l2_camera",
+                executable="v4l2_camera_node",
+                name="v4l2_camera",
                 namespace=namespace,
                 output="screen",
                 parameters=[
                     {
                         "video_device": video_device,
-                        "image_width": ParameterValue(image_width, value_type=int),
-                        "image_height": ParameterValue(image_height, value_type=int),
-                        "framerate": ParameterValue(framerate, value_type=float),
+                        "image_size": [1920, 1080],
                         "pixel_format": pixel_format,
-                        "camera_name": camera_name,
+                        "output_encoding": "rgb8",
                         "camera_info_url": camera_info_url,
-                        "frame_id": frame_id,
+                        "camera_frame_id": frame_id,
                     }
                 ],
             ),
