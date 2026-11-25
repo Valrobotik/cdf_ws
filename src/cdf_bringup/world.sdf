@@ -58,152 +58,152 @@
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_0_0</name>
-      <pose>-1.200 -0.945 0.055 0 1.5708 0</pose>
+      <pose>-1.000 -0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_0_1</name>
-      <pose>-1.200 -0.945 0.165 0 1.5708 0</pose>
+      <pose>-1.000 -0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_0_2</name>
-      <pose>-1.200 -0.945 0.275 0 1.5708 0</pose>
+      <pose>-1.000 -0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_1_0</name>
-      <pose>-1.200 0.945 0.055 0 1.5708 0</pose>
+      <pose>-0.500 -0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_1_1</name>
-      <pose>-1.200 0.945 0.165 0 1.5708 0</pose>
+      <pose>-0.500 -0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_1_2</name>
-      <pose>-1.200 0.945 0.275 0 1.5708 0</pose>
+      <pose>-0.500 -0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_2_0</name>
-      <pose>-0.600 -0.945 0.055 0 1.5708 0</pose>
+      <pose>0.500 -0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_2_1</name>
-      <pose>-0.600 -0.945 0.165 0 1.5708 0</pose>
+      <pose>0.500 -0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_2_2</name>
-      <pose>-0.600 -0.945 0.275 0 1.5708 0</pose>
+      <pose>0.500 -0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_3_0</name>
-      <pose>-0.600 0.945 0.055 0 1.5708 0</pose>
+      <pose>1.000 -0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_3_1</name>
-      <pose>-0.600 0.945 0.165 0 1.5708 0</pose>
+      <pose>1.000 -0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_3_2</name>
-      <pose>-0.600 0.945 0.275 0 1.5708 0</pose>
+      <pose>1.000 -0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_4_0</name>
-      <pose>0.000 -0.945 0.055 0 1.5708 0</pose>
+      <pose>-1.000 0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_4_1</name>
-      <pose>0.000 -0.945 0.165 0 1.5708 0</pose>
+      <pose>-1.000 0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_4_2</name>
-      <pose>0.000 -0.945 0.275 0 1.5708 0</pose>
+      <pose>-1.000 0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_5_0</name>
-      <pose>0.000 0.945 0.055 0 1.5708 0</pose>
+      <pose>-0.500 0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_5_1</name>
-      <pose>0.000 0.945 0.165 0 1.5708 0</pose>
+      <pose>-0.500 0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_5_2</name>
-      <pose>0.000 0.945 0.275 0 1.5708 0</pose>
+      <pose>-0.500 0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_6_0</name>
-      <pose>0.600 -0.945 0.055 0 1.5708 0</pose>
+      <pose>0.500 0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_6_1</name>
-      <pose>0.600 -0.945 0.165 0 1.5708 0</pose>
+      <pose>0.500 0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_6_2</name>
-      <pose>0.600 -0.945 0.275 0 1.5708 0</pose>
+      <pose>0.500 0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_7_0</name>
-      <pose>0.600 0.945 0.055 0 1.5708 0</pose>
+      <pose>1.000 0.945 0.055 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_7_1</name>
-      <pose>0.600 0.945 0.165 0 1.5708 0</pose>
+      <pose>1.000 0.945 0.165 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_7_2</name>
-      <pose>0.600 0.945 0.275 0 1.5708 0</pose>
+      <pose>1.000 0.945 0.275 0 1.5708 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_8_0</name>
-      <pose>1.200 -0.945 0.055 0 1.5708 0</pose>
+      <pose>0.000 -0.500 0.055 1.5708 0 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_8_1</name>
-      <pose>1.200 -0.945 0.165 0 1.5708 0</pose>
+      <pose>0.000 -0.500 0.165 1.5708 0 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_8_2</name>
-      <pose>1.200 -0.945 0.275 0 1.5708 0</pose>
+      <pose>0.000 -0.500 0.275 1.5708 0 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_9_0</name>
-      <pose>1.200 0.945 0.055 0 1.5708 0</pose>
+      <pose>0.000 0.500 0.055 1.5708 0 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_9_1</name>
-      <pose>1.200 0.945 0.165 0 1.5708 0</pose>
+      <pose>0.000 0.500 0.165 1.5708 0 0</pose>
     </include>
     <include>
       <uri>package://cdf_bringup/model/Pierre</uri>
       <name>stone_9_2</name>
-      <pose>1.200 0.945 0.275 0 1.5708 0</pose>
+      <pose>0.000 0.500 0.275 1.5708 0 0</pose>
     </include>
   </world>
 </sdf>
