@@ -3,6 +3,7 @@ from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -31,7 +32,9 @@ def generate_launch_description():
             executable='robot_state_publisher',
             name='robot_state_publisher',
             output='screen',
-            parameters=[{'robot_description': urdf, 'use_sim_time': sim}],
+            parameters=[{
+                'robot_description': ParameterValue(urdf, value_type=str),
+                'use_sim_time': sim}],
         ),
         Node(
             package='robot_state_publisher',
@@ -39,7 +42,9 @@ def generate_launch_description():
             name='robot_state_publisher_mcc',
             output='screen',
             namespace='mcc',
-            parameters=[{'robot_description': urdf_cam, 'use_sim_time': sim}],
+            parameters=[{
+                'robot_description': ParameterValue(urdf_cam, value_type=str),
+                'use_sim_time': sim}],
         ),
         Node(
             package='robot_localization',

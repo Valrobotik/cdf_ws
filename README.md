@@ -109,16 +109,6 @@ sudo ip link set can0 down
 # Simulation Gazebo (ros2_control via gz_ros2_control)
 ros2 launch cdf_bringup bringup.launch.py sim:=true
 
-## Pierres
-
-```bash
-# Monde complet
-ros2 launch cdf_bringup bringup.launch.py sim:=true stones:=full
-
-# Monde allégé
-ros2 launch cdf_bringup bringup.launch.py sim:=true stones:=light
-```
-
 # Matériel réel (stepper_foc_1_hw sur can0)
 ros2 launch cdf_bringup bringup.launch.py sim:=false
 
@@ -136,6 +126,26 @@ ros2 launch aruco_pose_estimation aruco_pose_estimation.launch.py sim:=true
 
 # Détection de marqueurs ArUco (matériel réel)
 ros2 launch aruco_pose_estimation aruco_pose_estimation.launch.py sim:=false
+```
+
+## Pierres
+
+```bash
+# Monde complet
+ros2 launch cdf_bringup bringup.launch.py sim:=true stones:=full
+
+# Monde allégé
+ros2 launch cdf_bringup bringup.launch.py sim:=true stones:=light
+```
+
+## Aspiration (simulation)
+
+```bash
+# Prendre la pierre la plus proche (<= 0.25 m)
+ros2 service call /vacuum/front std_srvs/srv/SetBool "{data: true}"
+
+# Relâcher
+ros2 service call /vacuum/front std_srvs/srv/SetBool "{data: false}"
 ```
 
 ## Ajouter des boîtes ArUco dans Gazebo
