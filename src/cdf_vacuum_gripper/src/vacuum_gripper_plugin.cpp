@@ -4,14 +4,15 @@
 #include <gz/sim/Link.hh>
 #include <gz/sim/Model.hh>
 #include <gz/sim/Util.hh>
-#include <gz/sim/components/DetachableJoint.hh>
 #include <gz/sim/components/Model.hh>
 #include <gz/sim/components/Name.hh>
 #include <gz/sim/components/Pose.hh>
+#include <gz/sim/components/CollisionBitmask.hh>
+#include <gz/sim/components/Collision.hh>
 
 #include <algorithm>
-#include <chrono>
 #include <set>
+#include <chrono>
 
 GZ_ADD_PLUGIN(
   cdf_vacuum_gripper::VacuumGripper,
@@ -55,12 +56,6 @@ void VacuumGripper::Configure(
   }
   if (sdf->HasElement("max_distance")) {
     maxDistance_ = sdf->Get<double>("max_distance");
-  }
-  if (sdf->HasElement("max_lateral")) {
-    maxLateral_ = sdf->Get<double>("max_lateral");
-  }
-  if (sdf->HasElement("clearance")) {
-    clearance_ = sdf->Get<double>("clearance");
   }
 
   gz::sim::Model model(modelEntity_);
@@ -123,21 +118,72 @@ void VacuumGripper::handleRequest(
   responseReady_ = false;
 }
 
+void VacuumGripper::setCollisionCategories(
+  gz::sim::EntityComponentManager & ecm)
+{
+  std::set<gz::sim::Entity> stoneCollisions;
+  ecm.Each<gz::sim::components::Model, gz::sim::components::Name>(
+    [&](const gz::sim::Entity & entity,
+    const gz::sim::components::Model *,
+    const gz::sim::components::Name * name)
+    {
+      if (name->Data().rfind(filter_, 0) != 0) {
+        return true;
+      }
+      const auto link = gz::sim::Model(entity).LinkByName(ecm, "link");
+      if (link != gz::sim::kNullEntity) {
+        for (const auto & collision :
+          ecm.ChildrenByComponents(link, gz::sim::components::Collision()))
+        {
+          stoneCollisions.insert(collision);
+        }
+      }
+      return true;
+    });
+
+  ecm.Each<gz::sim::components::Collision>(
+    [&](const gz::sim::Entity & entity,
+    const gz::sim::components::Collision *)
+    {
+      const uint16_t category =
+        stoneCollisions.count(entity) ? 2 : 1;
+      if (!ecm.Component<gz::sim::components::CategoryBitmaskCmd>(entity)) {
+        ecm.CreateComponent(
+          entity, gz::sim::components::CategoryBitmaskCmd(category));
+      } else {
+        ecm.SetComponentData<gz::sim::components::CategoryBitmaskCmd>(
+          entity, category);
+      }
+      return true;
+    });
+}
+
+void VacuumGripper::setCarriedCollisionMask(
+  gz::sim::EntityComponentManager & ecm, uint16_t mask)
+{
+  for (const auto & carried : carried_) {
+    if (carried.link == gz::sim::kNullEntity) {
+      continue;
+    }
+    for (const auto & collision :
+      ecm.ChildrenByComponents(
+        carried.link, gz::sim::components::Collision()))
+    {
+      if (!ecm.Component<gz::sim::components::CollideBitmaskCmd>(collision)) {
+        ecm.CreateComponent(
+          collision, gz::sim::components::CollideBitmaskCmd(mask));
+      } else {
+        ecm.SetComponentData<gz::sim::components::CollideBitmaskCmd>(
+          collision, mask);
+      }
+    }
+  }
+}
+
 gz::sim::Entity VacuumGripper::findClosestStone(
   gz::sim::EntityComponentManager & ecm)
 {
   const auto cupPose = gz::sim::worldPose(cupLink_, ecm);
-  const auto suctionAxis =
-    cupPose.Rot().RotateVector(gz::math::Vector3d(0, 0, 1));
-
-  std::set<gz::sim::Entity> heldLinks;
-  ecm.Each<gz::sim::components::DetachableJoint>(
-    [&heldLinks](const gz::sim::Entity &,
-    const gz::sim::components::DetachableJoint * joint)
-    {
-      heldLinks.insert(joint->Data().childLink);
-      return true;
-    });
 
   gz::sim::Entity best = gz::sim::kNullEntity;
   double bestDistance = maxDistance_;
@@ -155,34 +201,12 @@ gz::sim::Entity VacuumGripper::findClosestStone(
       }
 
       gz::sim::Model model(entity);
-      auto link = model.LinkByName(ecm, "link");
-      if (link == gz::sim::kNullEntity || heldLinks.count(link) != 0) {
+      if (model.LinkByName(ecm, "link") == gz::sim::kNullEntity) {
         return true;
       }
 
-      const auto delta = pose->Data().Pos() - cupPose.Pos();
-      const double forward = delta.Dot(suctionAxis);
-
-      // Project the box half-extents onto the suction axis. This is the
-      // minimum center distance that keeps the box clear of the chassis.
-      const auto boxRot = pose->Data().Rot();
-      const double half_x = 0.055;
-      const double half_y = 0.055;
-      const double half_z = 0.16;
-      const double extent =
-        half_x * std::abs(suctionAxis.Dot(boxRot.RotateVector(gz::math::Vector3d(1, 0, 0)))) +
-        half_y * std::abs(suctionAxis.Dot(boxRot.RotateVector(gz::math::Vector3d(0, 1, 0)))) +
-        half_z * std::abs(suctionAxis.Dot(boxRot.RotateVector(gz::math::Vector3d(0, 0, 1))));
-      if (forward < extent + clearance_) {
-        return true;
-      }
-
-      const auto lateral = delta - suctionAxis * forward;
-      if (lateral.Length() > maxLateral_) {
-        return true;
-      }
-
-      const double distance = delta.Length();
+      const double distance =
+        (pose->Data().Pos() - cupPose.Pos()).Length();
       if (distance < bestDistance) {
         bestDistance = distance;
         best = entity;
@@ -198,6 +222,24 @@ void VacuumGripper::PreUpdate(
   gz::sim::EntityComponentManager & ecm)
 {
   std::unique_lock<std::mutex> lock(mutex_);
+
+  if (!categoriesSet_) {
+    setCollisionCategories(ecm);
+    categoriesSet_ = true;
+  }
+
+  // Carry the grasped stack kinematically. This keeps the robot's motion
+  // independent from table/stack friction while preserving the stack shape.
+  if (heldStone_ != gz::sim::kNullEntity) {
+    const auto cupPose = gz::sim::worldPose(cupLink_, ecm);
+    // Only collide with other boxes, never with the robot or the table.
+    setCarriedCollisionMask(ecm, 2);
+    for (const auto & carried : carried_) {
+      ecm.SetComponentData<gz::sim::components::Pose>(
+        carried.entity, cupPose * carried.offset);
+    }
+  }
+
   if (!requestPending_) {
     return;
   }
@@ -212,24 +254,43 @@ void VacuumGripper::PreUpdate(
         responseSuccess_ = false;
         responseMessage_ = "No stone within reach";
       } else {
-        gz::sim::Model stoneModel(stone);
-        const auto stoneLink = stoneModel.LinkByName(ecm, "link");
-        if (stoneLink == gz::sim::kNullEntity) {
-          responseSuccess_ = false;
-          responseMessage_ = "Stone has no link";
-        } else {
-          jointEntity_ = ecm.CreateEntity();
-          ecm.CreateComponent(
-            jointEntity_,
-            gz::sim::components::DetachableJoint(
-              {cupLink_, stoneLink, "fixed"}));
-          ecm.CreateComponent(
-            jointEntity_,
-            gz::sim::components::Name("vacuum_joint"));
-          heldStone_ = stone;
-          responseSuccess_ = true;
-          responseMessage_ = "Stone attached";
-        }
+        const auto cupPose = gz::sim::worldPose(cupLink_, ecm);
+        const auto targetPose = gz::sim::worldPose(stone, ecm);
+
+        carried_.clear();
+        const auto targetLink =
+          gz::sim::Model(stone).LinkByName(ecm, "link");
+        carried_.push_back({stone, targetLink, cupPose.Inverse() * targetPose});
+
+        // Include every stone directly above the target in the same stack,
+        // so a bottom grasp carries the two boxes resting on it.
+        ecm.Each<gz::sim::components::Model,
+          gz::sim::components::Name,
+          gz::sim::components::Pose>(
+          [&](const gz::sim::Entity & entity,
+          const gz::sim::components::Model *,
+          const gz::sim::components::Name * name,
+          const gz::sim::components::Pose * pose)
+          {
+            if (entity == stone || name->Data().rfind(filter_, 0) != 0) {
+              return true;
+            }
+            const auto delta = pose->Data().Pos() - targetPose.Pos();
+            if (std::abs(delta.X()) < 0.075 &&
+                std::abs(delta.Y()) < 0.075 &&
+                delta.Z() > -0.02 && delta.Z() < 0.5)
+            {
+              const auto link = gz::sim::Model(entity).LinkByName(ecm, "link");
+              carried_.push_back({entity, link, cupPose.Inverse() * pose->Data()});
+            }
+            return true;
+          });
+
+        heldStone_ = stone;
+        gzmsg << "VacuumGripper: carrying " << carried_.size()
+              << " stone(s)" << std::endl;
+        responseSuccess_ = true;
+        responseMessage_ = "Stone attached";
       }
     }
   } else {
@@ -237,11 +298,9 @@ void VacuumGripper::PreUpdate(
       responseSuccess_ = true;
       responseMessage_ = "Nothing attached";
     } else {
-      if (jointEntity_ != gz::sim::kNullEntity) {
-        ecm.RequestRemoveEntity(jointEntity_);
-      }
-      jointEntity_ = gz::sim::kNullEntity;
+      setCarriedCollisionMask(ecm, 0xFFFF);
       heldStone_ = gz::sim::kNullEntity;
+      carried_.clear();
       responseSuccess_ = true;
       responseMessage_ = "Stone released";
     }
