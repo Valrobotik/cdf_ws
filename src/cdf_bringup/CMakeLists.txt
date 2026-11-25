@@ -24,12 +24,18 @@ if(BUILD_TESTING)
 endif()
 
 install(DIRECTORY
-  launch description config model
+  launch description config
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(CODE "
+  file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}/model\")
+  file(COPY \"${CMAKE_CURRENT_SOURCE_DIR}/model\"
+       DESTINATION \"\${CMAKE_INSTALL_PREFIX}/share/${PROJECT_NAME}\")
+")
+
 install(FILES
-  robot.rviz world.sdf
+  robot.rviz world.sdf world_light.sdf
   DESTINATION share/${PROJECT_NAME}
 )
 

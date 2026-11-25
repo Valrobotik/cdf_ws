@@ -2,17 +2,22 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler
 from launch.event_handlers import OnProcessExit
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import (
+    LaunchConfiguration, PathJoinSubstitution, PythonExpression)
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
     rviz = LaunchConfiguration('rviz')
+    stones = LaunchConfiguration('stones')
 
     robot_launch = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'launch', 'robot.launch.py'])
     gz_launch_path = PathJoinSubstitution([FindPackageShare('ros_gz_sim'), 'launch', 'gz_sim.launch.py'])
-    world_path = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'world.sdf'])
+    world_file = PythonExpression(
+        ["'world_light.sdf' if '", stones, "' == 'light' else 'world.sdf'"])
+    world_path = PathJoinSubstitution(
+        [FindPackageShare('cdf_bringup'), world_file])
     bridge_cfg_path = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'config', 'ros_gz_example_bridge.yaml'])
     controllers_cfg = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'config', 'controllers.yaml'])
 
@@ -47,6 +52,10 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'rviz', default_value='true',
             description='Start rviz'),
+        DeclareLaunchArgument(
+            'stones', default_value='full',
+            choices=['full', 'light'],
+            description='Stone layout: full (10 stacks, 30 stones) or light (4 stacks, 12 stones)'),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(robot_launch),

@@ -109,6 +109,16 @@ sudo ip link set can0 down
 # Simulation Gazebo (ros2_control via gz_ros2_control)
 ros2 launch cdf_bringup bringup.launch.py sim:=true
 
+## Pierres
+
+```bash
+# Monde complet
+ros2 launch cdf_bringup bringup.launch.py sim:=true stones:=full
+
+# Monde allégé
+ros2 launch cdf_bringup bringup.launch.py sim:=true stones:=light
+```
+
 # Matériel réel (stepper_foc_1_hw sur can0)
 ros2 launch cdf_bringup bringup.launch.py sim:=false
 

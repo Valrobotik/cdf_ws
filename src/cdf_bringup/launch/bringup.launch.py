@@ -9,6 +9,7 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     sim = LaunchConfiguration('sim')
     rviz = LaunchConfiguration('rviz')
+    stones = LaunchConfiguration('stones')
 
     sim_launch = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'launch', 'sim.launch.py'])
     hardware_launch = PathJoinSubstitution([FindPackageShare('cdf_bringup'), 'launch', 'hardware.launch.py'])
@@ -21,11 +22,15 @@ def generate_launch_description():
         DeclareLaunchArgument(
             'rviz', default_value='true',
             description='Start rviz'),
+        DeclareLaunchArgument(
+            'stones', default_value='full',
+            choices=['full', 'light'],
+            description='Stone layout: full (10 stacks) or light (4 stacks)'),
 
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(sim_launch),
             condition=IfCondition(sim),
-            launch_arguments={'rviz': rviz}.items(),
+            launch_arguments={'rviz': rviz, 'stones': stones}.items(),
         ),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(hardware_launch),
