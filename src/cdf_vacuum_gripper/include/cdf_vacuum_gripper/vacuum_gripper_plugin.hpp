@@ -2,7 +2,6 @@
 #define CDF_VACUUM_GRIPPER__VACUUM_GRIPPER_PLUGIN_HPP_
 
 #include <gz/sim/EntityComponentManager.hh>
-#include <gz/math/Pose3.hh>
 #include <gz/sim/System.hh>
 #include <rclcpp/rclcpp.hpp>
 #include <std_srvs/srv/set_bool.hpp>
@@ -12,7 +11,6 @@
 #include <mutex>
 #include <string>
 #include <thread>
-#include <vector>
 
 namespace cdf_vacuum_gripper
 {
@@ -41,25 +39,14 @@ private:
     std::shared_ptr<std_srvs::srv::SetBool::Response> response);
 
   gz::sim::Entity findClosestStone(gz::sim::EntityComponentManager & ecm);
-  void setCollisionCategories(gz::sim::EntityComponentManager & ecm);
-  void setCarriedCollisionMask(
-    gz::sim::EntityComponentManager & ecm, uint16_t mask);
 
-  struct CarriedStone
-  {
-    gz::sim::Entity entity{gz::sim::kNullEntity};
-    gz::sim::Entity link{gz::sim::kNullEntity};
-    gz::math::Pose3d offset;
-  };
-
-  gz::sim::Entity modelEntity_{gz::sim::kNullEntity};
   gz::sim::Entity cupLink_{gz::sim::kNullEntity};
+  gz::sim::Entity jointEntity_{gz::sim::kNullEntity};
   gz::sim::Entity heldStone_{gz::sim::kNullEntity};
-  std::vector<CarriedStone> carried_;
 
   std::string cupLinkName_;
   std::string serviceName_;
-  std::string filter_;
+  std::string filter_{"stone_"};
   double maxDistance_{0.25};
 
   std::shared_ptr<rclcpp::Node> node_;
@@ -72,7 +59,6 @@ private:
   bool requestPending_{false};
   bool requestEnable_{false};
   bool responseReady_{false};
-  bool categoriesSet_{false};
   bool responseSuccess_{false};
   std::string responseMessage_;
 };

@@ -124,8 +124,6 @@
             <cup_link>front_suction_cup</cup_link>
             <service_name>/vacuum/front</service_name>
             <max_distance>0.25</max_distance>
-            <clearance>0.0</clearance>
-            <max_lateral>0.08</max_lateral>
             <filter>stone_</filter>
         </plugin>
     </gazebo>
