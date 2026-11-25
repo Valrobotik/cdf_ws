@@ -64,7 +64,7 @@ ArUco.
 sudo apt install ros-lyrical-camera-calibration
 
 ros2 run camera_calibration cameracalibrator \
-  --size 8x6 --square 0.025 \
+  --size 8x6 --square 0.025 --no-service-check \
   image:=/mcc/camera/image_raw camera:=/mcc/camera
 ```
 
