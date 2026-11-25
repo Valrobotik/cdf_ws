@@ -56,6 +56,12 @@ void VacuumGripper::Configure(
   if (sdf->HasElement("max_distance")) {
     maxDistance_ = sdf->Get<double>("max_distance");
   }
+  if (sdf->HasElement("max_lateral")) {
+    maxLateral_ = sdf->Get<double>("max_lateral");
+  }
+  if (sdf->HasElement("clearance")) {
+    clearance_ = sdf->Get<double>("clearance");
+  }
 
   gz::sim::Model model(modelEntity_);
   cupLink_ = model.LinkByName(ecm, cupLinkName_);
@@ -121,6 +127,8 @@ gz::sim::Entity VacuumGripper::findClosestStone(
   gz::sim::EntityComponentManager & ecm)
 {
   const auto cupPose = gz::sim::worldPose(cupLink_, ecm);
+  const auto suctionAxis =
+    cupPose.Rot().RotateVector(gz::math::Vector3d(0, 0, 1));
 
   std::set<gz::sim::Entity> heldLinks;
   ecm.Each<gz::sim::components::DetachableJoint>(
@@ -152,7 +160,29 @@ gz::sim::Entity VacuumGripper::findClosestStone(
         return true;
       }
 
-      const double distance = (pose->Data().Pos() - cupPose.Pos()).Length();
+      const auto delta = pose->Data().Pos() - cupPose.Pos();
+      const double forward = delta.Dot(suctionAxis);
+
+      // Project the box half-extents onto the suction axis. This is the
+      // minimum center distance that keeps the box clear of the chassis.
+      const auto boxRot = pose->Data().Rot();
+      const double half_x = 0.055;
+      const double half_y = 0.055;
+      const double half_z = 0.16;
+      const double extent =
+        half_x * std::abs(suctionAxis.Dot(boxRot.RotateVector(gz::math::Vector3d(1, 0, 0)))) +
+        half_y * std::abs(suctionAxis.Dot(boxRot.RotateVector(gz::math::Vector3d(0, 1, 0)))) +
+        half_z * std::abs(suctionAxis.Dot(boxRot.RotateVector(gz::math::Vector3d(0, 0, 1))));
+      if (forward < extent + clearance_) {
+        return true;
+      }
+
+      const auto lateral = delta - suctionAxis * forward;
+      if (lateral.Length() > maxLateral_) {
+        return true;
+      }
+
+      const double distance = delta.Length();
       if (distance < bestDistance) {
         bestDistance = distance;
         best = entity;

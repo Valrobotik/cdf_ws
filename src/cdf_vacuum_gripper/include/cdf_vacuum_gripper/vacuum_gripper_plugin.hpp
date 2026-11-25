@@ -49,6 +49,8 @@ private:
   std::string serviceName_;
   std::string filter_;
   double maxDistance_{0.25};
+  double maxLateral_{0.08};
+  double clearance_{0.0};
 
   std::shared_ptr<rclcpp::Node> node_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_;
