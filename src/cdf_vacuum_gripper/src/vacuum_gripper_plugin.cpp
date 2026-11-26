@@ -157,6 +157,26 @@ void VacuumGripper::PreUpdate(
   gz::sim::EntityComponentManager & ecm)
 {
   std::unique_lock<std::mutex> lock(mutex_);
+  if (attachPending_) {
+    for (const auto & link : pendingLinks_) {
+      const auto joint = ecm.CreateEntity();
+      ecm.CreateComponent(
+        joint, gz::sim::components::DetachableJoint({cupLink_, link, "fixed"}));
+      ecm.CreateComponent(
+        joint, gz::sim::components::Name("vacuum_joint"));
+      jointEntities_.push_back(joint);
+    }
+    pendingLinks_.clear();
+    attachPending_ = false;
+    heldStone_ = pendingStone_;
+    pendingStone_ = gz::sim::kNullEntity;
+    responseSuccess_ = true;
+    responseMessage_ = "Stone attached";
+    responseReady_ = true;
+    cv_.notify_all();
+    return;
+  }
+
   if (!requestPending_) {
     return;
   }
@@ -180,6 +200,7 @@ void VacuumGripper::PreUpdate(
           // Lift the target and every box above it slightly off the table.
           // The fixed joint then carries the stack instead of dragging it.
           const auto targetPose = gz::sim::worldPose(stone, ecm);
+          pendingLinks_.clear();
           ecm.Each<gz::sim::components::Model,
             gz::sim::components::Name,
             gz::sim::components::Pose>(
@@ -194,27 +215,30 @@ void VacuumGripper::PreUpdate(
               const auto delta = pose->Data().Pos() - targetPose.Pos();
               if (std::abs(delta.X()) < 0.075 &&
                   std::abs(delta.Y()) < 0.075 &&
-                  delta.Z() > -0.02)
+                  delta.Z() > -0.02 && delta.Z() < 0.5)
               {
                 auto lifted = pose->Data();
                 lifted.Pos().Z(lifted.Pos().Z() + lift_);
-                ecm.SetComponentData<gz::sim::components::Pose>(
-                  entity, lifted);
+                gz::sim::Model(entity).SetWorldPoseCmd(ecm, lifted);
+                const auto link = gz::sim::Model(entity).LinkByName(ecm, "link");
+                if (link != gz::sim::kNullEntity) {
+                  pendingLinks_.push_back(link);
+                }
               }
               return true;
             });
 
-          jointEntity_ = ecm.CreateEntity();
-          ecm.CreateComponent(
-            jointEntity_,
-            gz::sim::components::DetachableJoint(
-              {cupLink_, stoneLink, "fixed"}));
-          ecm.CreateComponent(
-            jointEntity_,
-            gz::sim::components::Name("vacuum_joint"));
-          heldStone_ = stone;
-          responseSuccess_ = true;
-          responseMessage_ = "Stone attached";
+          if (pendingLinks_.empty()) {
+            responseSuccess_ = false;
+            responseMessage_ = "Stone has no link";
+          } else {
+            // Defer the joint creation by one step so that it is created from
+            // the lifted pose instead of the pose on the table.
+            pendingStone_ = stone;
+            attachPending_ = true;
+            responseReady_ = false;
+            return;
+          }
         }
       }
     }
@@ -223,10 +247,10 @@ void VacuumGripper::PreUpdate(
       responseSuccess_ = true;
       responseMessage_ = "Nothing attached";
     } else {
-      if (jointEntity_ != gz::sim::kNullEntity) {
-        ecm.RequestRemoveEntity(jointEntity_);
+      for (const auto & joint : jointEntities_) {
+        ecm.RequestRemoveEntity(joint);
       }
-      jointEntity_ = gz::sim::kNullEntity;
+      jointEntities_.clear();
       heldStone_ = gz::sim::kNullEntity;
       responseSuccess_ = true;
       responseMessage_ = "Stone released";

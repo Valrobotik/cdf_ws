@@ -18,6 +18,6 @@
     <xacro:property name="wheel_axle_z" value="${wheel_link_diameter/2}" />
     <xacro:property name="chassis_center_z" value="${wheel_axle_z}" />
 
-    <xacro:property name="chassis_mass" value="1.5" />
-    <xacro:property name="wheel_mass" value="0.1" />
+    <xacro:property name="chassis_mass" value="4" />
+    <xacro:property name="wheel_mass" value="0.25" />
 </robot>

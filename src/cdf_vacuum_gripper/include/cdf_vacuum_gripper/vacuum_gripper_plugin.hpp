@@ -11,6 +11,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <vector>
 
 namespace cdf_vacuum_gripper
 {
@@ -41,14 +42,16 @@ private:
   gz::sim::Entity findClosestStone(gz::sim::EntityComponentManager & ecm);
 
   gz::sim::Entity cupLink_{gz::sim::kNullEntity};
-  gz::sim::Entity jointEntity_{gz::sim::kNullEntity};
   gz::sim::Entity heldStone_{gz::sim::kNullEntity};
+  gz::sim::Entity pendingStone_{gz::sim::kNullEntity};
+  std::vector<gz::sim::Entity> pendingLinks_;
+  std::vector<gz::sim::Entity> jointEntities_;
 
   std::string cupLinkName_;
   std::string serviceName_;
   std::string filter_{"stone_"};
   double maxDistance_{0.25};
-  double lift_{0.01};
+  double lift_{0.03};
 
   std::shared_ptr<rclcpp::Node> node_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_;
@@ -60,6 +63,7 @@ private:
   bool requestPending_{false};
   bool requestEnable_{false};
   bool responseReady_{false};
+  bool attachPending_{false};
   bool responseSuccess_{false};
   std::string responseMessage_;
 };
