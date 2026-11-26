@@ -1,3 +1,6 @@
+import os
+
+from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.substitutions import LaunchConfiguration
@@ -5,6 +8,10 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
+    default_camera_info_url = 'file://' + os.path.join(
+        get_package_share_directory('cdf_bringup'),
+        'config', 'camera_info', 'zdc_1920x1080.yaml')
+
     namespace = LaunchConfiguration("namespace")
     video_device = LaunchConfiguration("video_device")
     pixel_format = LaunchConfiguration("pixel_format")
@@ -30,8 +37,8 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "camera_info_url",
-                default_value="",
-                description="Optional file:// URL to the ZDC calibration yaml",
+                default_value=default_camera_info_url,
+                description="ZDC 1920x1080 calibration YAML",
             ),
             DeclareLaunchArgument(
                 "frame_id",

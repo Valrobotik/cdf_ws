@@ -1,0 +1,26 @@
+image_width: 1920
+image_height: 1080
+camera_name: zdc
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [779.24046,   0.     , 986.34261,
+           0.     , 783.98045, 419.57221,
+           0.     ,   0.     ,   1.     ]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.049062, -0.001738, 0.005872, 0.002184, 0.000000]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1., 0., 0.,
+         0., 1., 0.,
+         0., 0., 1.]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [ 702.2432 ,    0.     , 1006.71124,    0.     ,
+            0.     ,  765.70565,  420.22914,    0.     ,
+            0.     ,    0.     ,    1.     ,    0.     ]
