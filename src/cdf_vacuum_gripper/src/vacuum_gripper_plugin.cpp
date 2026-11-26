@@ -9,6 +9,7 @@
 #include <gz/sim/components/Pose.hh>
 
 #include <chrono>
+#include <cmath>
 
 GZ_ADD_PLUGIN(
   cdf_vacuum_gripper::VacuumGripper,
@@ -50,6 +51,9 @@ void VacuumGripper::Configure(
   }
   if (sdf->HasElement("max_distance")) {
     maxDistance_ = sdf->Get<double>("max_distance");
+  }
+  if (sdf->HasElement("lift")) {
+    lift_ = sdf->Get<double>("lift");
   }
 
   gz::sim::Model model(entity);
@@ -173,6 +177,33 @@ void VacuumGripper::PreUpdate(
           responseSuccess_ = false;
           responseMessage_ = "Stone has no link";
         } else {
+          // Lift the target and every box above it slightly off the table.
+          // The fixed joint then carries the stack instead of dragging it.
+          const auto targetPose = gz::sim::worldPose(stone, ecm);
+          ecm.Each<gz::sim::components::Model,
+            gz::sim::components::Name,
+            gz::sim::components::Pose>(
+            [&](const gz::sim::Entity & entity,
+            const gz::sim::components::Model *,
+            const gz::sim::components::Name * name,
+            const gz::sim::components::Pose * pose)
+            {
+              if (name->Data().rfind(filter_, 0) != 0) {
+                return true;
+              }
+              const auto delta = pose->Data().Pos() - targetPose.Pos();
+              if (std::abs(delta.X()) < 0.075 &&
+                  std::abs(delta.Y()) < 0.075 &&
+                  delta.Z() > -0.02)
+              {
+                auto lifted = pose->Data();
+                lifted.Pos().Z(lifted.Pos().Z() + lift_);
+                ecm.SetComponentData<gz::sim::components::Pose>(
+                  entity, lifted);
+              }
+              return true;
+            });
+
           jointEntity_ = ecm.CreateEntity();
           ecm.CreateComponent(
             jointEntity_,

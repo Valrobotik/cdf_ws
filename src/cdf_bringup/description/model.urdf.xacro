@@ -71,7 +71,7 @@
                 <surface>
                     <friction>
                         <ode>
-                            <mu>1.0</mu>
+                            <mu>1.2</mu>
                             <mu2>0.0</mu2>
                             <fdir1 gz:expressed_in="base_link">${fdir}</fdir1>
                         </ode>
@@ -124,6 +124,7 @@
             <cup_link>front_suction_cup</cup_link>
             <service_name>/vacuum/front</service_name>
             <max_distance>0.25</max_distance>
+            <lift>0.01</lift>
             <filter>stone_</filter>
         </plugin>
     </gazebo>

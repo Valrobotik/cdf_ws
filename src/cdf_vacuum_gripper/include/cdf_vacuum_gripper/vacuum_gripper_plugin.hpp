@@ -48,6 +48,7 @@ private:
   std::string serviceName_;
   std::string filter_{"stone_"};
   double maxDistance_{0.25};
+  double lift_{0.01};
 
   std::shared_ptr<rclcpp::Node> node_;
   rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_;
