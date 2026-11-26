@@ -20,7 +20,7 @@
         tf_publish_rate: 20.0 # Hz
         calibrate_on_start: true # Calibrate at startup, retry until it succeeds
         calibration_frames: 30 # Detections of every reference tag to collect (median is used)
-        calibration_timeout: 15.0 # Seconds before an attempt is abandoned
+        calibration_timeout: 60.0 # Seconds before an attempt is abandoned
         max_reprojection_error_px: 2.0 # Reject calibrations with a larger RMS reprojection error
         # Play-area frame published as map -> table after a successful calibration.
         # Origin = top-right corner of the play area, x towards the left, y towards the bottom.

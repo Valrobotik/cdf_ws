@@ -93,7 +93,7 @@ from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 import rclpy.time
 import tf2_ros
-from rclpy.qos import qos_profile_sensor_data
+from rclpy.qos import qos_profile_default
 from cv_bridge import CvBridge
 import message_filters
 
@@ -165,7 +165,7 @@ class ArucoNode(rclpy.node.Node):
 
         # camera info topic for the camera calibration parameters
         self.info_sub = self.create_subscription(
-            CameraInfo, self.info_topic, self.info_callback, qos_profile_sensor_data
+            CameraInfo, self.info_topic, self.info_callback, qos_profile_default
         )
 
         # select the type of input to use for the pose estimation
@@ -174,9 +174,9 @@ class ArucoNode(rclpy.node.Node):
 
             # create a message filter to synchronize the image and depth image topics
             self.image_sub = message_filters.Subscriber(self, Image, self.image_topic,
-                                                        qos_profile=qos_profile_sensor_data)
+                                                        qos_profile=qos_profile_default)
             self.depth_image_sub = message_filters.Subscriber(self, Image, self.depth_image_topic,
-                                                              qos_profile=qos_profile_sensor_data)
+                                                              qos_profile=qos_profile_default)
 
             # create synchronizer between the 2 topics using message filters and approximate time policy
             # slop is the maximum time difference between messages that are considered synchronized
@@ -189,7 +189,7 @@ class ArucoNode(rclpy.node.Node):
 
             # create a subscription to the image topic
             self.image_sub = self.create_subscription(
-                Image, self.image_topic, self.image_callback, qos_profile_sensor_data
+                Image, self.image_topic, self.image_callback, qos_profile_default
             )
 
         # Set up publishers
